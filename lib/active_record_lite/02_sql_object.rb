@@ -78,7 +78,7 @@ class SQLObject < MassObject
     self.id = DBConnection.last_insert_row_id
   end
 
-  def initialize(params)
+  def initialize(params = {})
     columns = self.class.columns
     params.each do |name, value|
       name = name.to_sym
@@ -90,7 +90,7 @@ class SQLObject < MassObject
   end
 
   def save
-    # ...
+    self.id ? self.update : self.insert
   end
 
   def update

@@ -3,7 +3,7 @@ require_relative '01_mass_object'
 require_relative '00_attr_accessor_object'
 require 'active_support/inflector'
 
-class MassObject < AttrAccessorObject
+class MassObject
   def self.parse_all(results)
     results.map do |result|
       self.new(result)
@@ -23,7 +23,7 @@ class SQLObject < MassObject
         1
     SQL
     attributes = DBConnection.execute2(columns_query).first.map(&:to_sym)
-    my_attr_accessor(*attributes)
+    add_attribute_accessors(attributes)
     @columns = attributes
     attributes
   end
@@ -67,7 +67,7 @@ class SQLObject < MassObject
   end
 
   def insert
-    # ...
+    #column_names =
   end
 
   def initialize(params)
@@ -95,5 +95,15 @@ class SQLObject < MassObject
 
   private
 
+  def self.add_attribute_accessors(attributes)
+    attributes.each do |attribute|
+      define_method(attribute) do
+        self.attributes[attribute]
+      end
+      define_method("#{attribute}=") do |value|
+        self.attributes[attribute] = value
+      end
+    end
+  end
 
 end

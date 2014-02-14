@@ -1,6 +1,5 @@
 require_relative 'db_connection'
 require_relative '01_mass_object'
-require_relative '00_attr_accessor_object'
 require 'active_support/inflector'
 
 class MassObject
@@ -67,7 +66,16 @@ class SQLObject < MassObject
   end
 
   def insert
-    #column_names =
+    column_names = self.attributes.keys.join(", ")
+    question_marks = (['?'] * self.attributes.count).join(", ")
+    insert_query = <<-SQL
+      INSERT INTO
+        #{table_name} (#{column_names})
+      VALUES
+        (#{question_marks})
+    SQL
+    DBConnection.execute(insert_query, *attribute_values.compact)
+    self.id = DBConnection.last_insert_row_id
   end
 
   def initialize(params)
@@ -90,7 +98,9 @@ class SQLObject < MassObject
   end
 
   def attribute_values
-    # ...
+    self.class.columns.map do |attribute|
+      self.send(attribute)
+    end
   end
 
   private
@@ -104,6 +114,10 @@ class SQLObject < MassObject
         self.attributes[attribute] = value
       end
     end
+  end
+
+  def table_name
+    self.class.table_name
   end
 
 end

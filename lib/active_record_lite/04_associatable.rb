@@ -35,7 +35,7 @@ class AssocOptions
   end
 
   def generate_foreign_key
-    foreign_key_name = association_class_name.singularize.downcase
+    foreign_key_name = association_class_name.to_s.singularize.downcase
     "#{foreign_key_name}_id".to_sym
   end
 
@@ -64,11 +64,25 @@ end
 module Associatable
   # Phase IVb
   def belongs_to(name, options = {})
-    # ...
+    options = BelongsToOptions.new(name, options)
+    define_method(name) do
+      foreign_key_id = self.send(options.foreign_key)
+      target_class = options.model_class
+      where_conditions = {}
+      where_conditions[options.primary_key] = foreign_key_id
+      target_class.where(where_conditions).first
+    end
   end
 
   def has_many(name, options = {})
-    # ...
+    options = HasManyOptions.new(name, self.to_s, options)
+    define_method(name) do
+      primary_key_id = self.send(options.primary_key)
+      target_class = options.model_class
+      where_conditions = {}
+      where_conditions[options.foreign_key] = primary_key_id
+      target_class.where(where_conditions)
+    end
   end
 
   def assoc_options
@@ -77,5 +91,5 @@ module Associatable
 end
 
 class SQLObject
-  # Mixin Associatable here...
+  extend Associatable
 end

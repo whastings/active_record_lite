@@ -94,7 +94,20 @@ class SQLObject < MassObject
   end
 
   def update
-    # ...
+    columns = self.class.columns.dup
+    columns.delete(:id)
+    set_string = columns.map { |column| "#{column} = ?" }.join(', ')
+    update_query = <<-SQL
+      UPDATE
+        #{table_name}
+      SET
+        #{set_string}
+      WHERE
+        id = ?
+    SQL
+    query_values = attribute_values
+    query_id = query_values.shift
+    DBConnection.execute(update_query, *query_values, query_id)
   end
 
   def attribute_values

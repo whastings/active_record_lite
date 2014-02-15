@@ -7,6 +7,7 @@ describe "Associatable" do
   before(:all) do
     class Cat < SQLObject
       belongs_to :human, :foreign_key => :owner_id
+      belongs_to :cat_house
     end
 
     class Human < SQLObject
@@ -17,6 +18,10 @@ describe "Associatable" do
 
     class House < SQLObject
       has_many :humans
+    end
+
+    class CatHouse < SQLObject
+      has_many :cats
     end
   end
 
@@ -65,6 +70,31 @@ describe "Associatable" do
 
       expect(house).to be_instance_of(House)
       expect(house.address).to eq("26th and Guerrero")
+    end
+  end
+
+  describe "#has_many_through" do
+    describe "has_many through belongs_to" do
+      before(:all) do
+        class Human
+          has_many_through :cat_houses, :cats, :cat_house
+        end
+      end
+
+      let(:human) { Human.find(3) }
+
+      it "adds method" do
+        expect(human).to respond_to(:cat_houses)
+      end
+
+      it "fetches human's associated cat houses" do
+        cat_houses = human.cat_houses
+        expect(cat_houses.length).to eq(2)
+        expect(cat_houses.first.color).to eq('pink')
+        expect(cat_houses.first.id).to eq(3)
+        expect(cat_houses.last.color).to eq('gold')
+        expect(cat_houses.last.id).to eq(4)
+      end
     end
   end
 end

@@ -1,7 +1,13 @@
+CREATE TABLE cat_houses(
+  id INTEGER PRIMARY KEY,
+  color VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE cats (
   id INTEGER PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   owner_id INTEGER NOT NULL,
+  cat_house_id INTEGER,
 
   FOREIGN KEY(owner_id) REFERENCES human(id)
 );
@@ -21,6 +27,10 @@ CREATE TABLE houses (
 );
 
 INSERT INTO
+  cat_houses (color)
+VALUES
+  ("brown"), ("blue"), ("pink"), ("gold");
+INSERT INTO
   houses (address)
 VALUES
   ("26th and Guerrero"), ("Dolores and Market");
@@ -31,6 +41,6 @@ VALUES
   ("Devon", "Watts", 1), ("Matt", "Rubens", 1), ("Ned", "Ruggeri", 2);
 
 INSERT INTO
-  cats (name, owner_id)
+  cats (name, owner_id, cat_house_id)
 VALUES
-  ("Breakfast", 1), ("Earl", 2), ("Haskell", 3), ("Markov", 3);
+  ("Breakfast", 1, 1), ("Earl", 2, 2), ("Haskell", 3, 3), ("Markov", 3, 4);

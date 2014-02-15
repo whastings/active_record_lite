@@ -1,3 +1,7 @@
-After the project, you can review the solution here:
+# ActiveRecord Lite
 
-* https://github.com/appacademy-solutions/active_record_lite/tree/solution
+This is a reimplementation of some of ActiveRecord's core features,
+namely, model persistence, querying, and basic associations.
+
+I implemented it as a project for [App Academy](http://appacademy.io),
+to learn about how Rails' ActiveRecord works its magic.

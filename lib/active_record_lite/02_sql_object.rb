@@ -80,6 +80,7 @@ class SQLObject < MassObject
 
   def initialize(params = {})
     columns = self.class.columns
+    check_forbidden_parameters(params)
     params.each do |name, value|
       name = name.to_sym
       unless columns.include?(name)
@@ -133,4 +134,16 @@ class SQLObject < MassObject
     self.class.table_name
   end
 
+  def check_forbidden_parameters(params)
+    return unless params.respond_to?(:permitted?)
+    params.each do |param, _|
+      unless params.permitted?(param)
+        raise ForbiddenAttributesError, 'Attribute #{param} not permitted.'
+      end
+    end
+  end
+
+end
+
+class ForbiddenAttributesError < ArgumentError
 end

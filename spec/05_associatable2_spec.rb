@@ -18,6 +18,11 @@ describe "Associatable" do
 
     class House < SQLObject
       has_many :humans
+      has_many :windows
+    end
+
+    class Window < SQLObject
+      belongs_to :house
     end
 
     class CatHouse < SQLObject
@@ -94,6 +99,25 @@ describe "Associatable" do
         expect(cat_houses.first.id).to eq(3)
         expect(cat_houses.last.color).to eq('gold')
         expect(cat_houses.last.id).to eq(4)
+      end
+    end
+
+    describe "belongs_to through has_many" do
+      before(:all) do
+        class Human
+          has_many_through :windows, :house, :windows
+        end
+      end
+
+      let(:human) { Human.find(2) }
+
+      it "adds method" do
+        expect(human).to respond_to(:windows)
+      end
+
+      it "fetches human's associated windows" do
+        windows = human.windows
+        expect(windows.map(&:id)).to eq([1, 2, 3, 4])
       end
     end
   end

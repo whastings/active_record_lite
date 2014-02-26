@@ -55,4 +55,17 @@ module Associatable
       source_options.model_class.parse_all(results)
     end
   end
+
+  def has_many_through_belongs(name, through_name, source_name)
+    define_method(name) do
+      through_options = self.class.assoc_options[through_name]
+      source_options = through_options.model_class.assoc_options[source_name]
+      association_query = <<-SQL
+        SELECT
+          source_table.*
+        FROM
+          #{source_options.table_name} source_table
+      SQL
+    end
+  end
 end

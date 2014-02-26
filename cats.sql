@@ -10,6 +10,7 @@ CREATE TABLE cats (
   cat_house_id INTEGER,
 
   FOREIGN KEY(owner_id) REFERENCES human(id)
+  FOREIGN KEY(cat_house_id) REFERENCES cat_houses(id)
 );
 
 CREATE TABLE humans (
@@ -24,6 +25,13 @@ CREATE TABLE humans (
 CREATE TABLE houses (
   id INTEGER PRIMARY KEY,
   address VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE windows (
+  id INTEGER PRIMARY KEY,
+  house_id INTEGER NOT NULL,
+
+  FOREIGN KEY(house_id) REFERENCES houses(id)
 );
 
 INSERT INTO
@@ -44,3 +52,8 @@ INSERT INTO
   cats (name, owner_id, cat_house_id)
 VALUES
   ("Breakfast", 1, 1), ("Earl", 2, 2), ("Haskell", 3, 3), ("Markov", 3, 4);
+
+INSERT INTO
+  windows (house_id)
+VALUES
+  (1), (1), (1), (1);
